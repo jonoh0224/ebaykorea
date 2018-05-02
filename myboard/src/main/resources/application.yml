@@ -1,0 +1,69 @@
+spring:
+  profiles:
+    active: local
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+  thymeleaf:
+    cache: false
+    check-template: true
+    check-template-location: true
+    enabled: true
+    encoding: UTF-8
+    # excluded-view-names:
+    # mode: HTML5
+    prefix: classpath:/templates/
+    suffix: .html
+    # template-resolver-order:
+    # view-names:
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
+    username: sa
+    password: sa
+    initialization-mode: always
+  h2:
+    console:
+      enabled: true
+#    http://localhost:8080/h2-console
+
+#  resources:
+#    static-locations: classpath:/resources/,classpath:/static/
+
+
+#spring:
+#  datasource:
+#    url: jdbc:h2:mem:mydb
+#    username: sa
+#    password:
+
+
+#spring:
+#  datasource:
+#    url: jdbc:mysql://localhost:3306/helloboard?useUnicode=true&characterEncoding=utf8&useSSL=false
+#    username: fastcamp
+#    password: fastcamp
+
+
+# 반드시 / 로 끝내야 한다.
+file:
+  upload:
+    dir: /tmp/
+
+
+my:
+  address: 192.168.1.100
+
+server:
+  port: 8080
+---
+spring:
+  profiles: local
+my:
+  address: 127.0.0.1
+---
+spring:
+  profiles: heroku
+my:
+  address: 192.168.1.120

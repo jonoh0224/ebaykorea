@@ -1,0 +1,194 @@
+1. 페이징 처리.
+
+
+1-1. 페이징 처리를 위한 Repository 메소드를 추가.
+
+1-1-1.
+페이지 처리를 위한 메소드는 Page<도메인객체> 반환하도록 한다.
+Page에는 검색된 결과, 검색된 결과의 건수, 전체 페이지수
+
+1-1-2.
+페이지 처리를 위한 메소드는 Pageable 타입을 파라미터로 받아야 한다.
+사용자가 해당 인터페이스를 구현한 객체를 파라미터로 전달해서 사용해야한다.
+
+Pageable pageable = PageRequest.of( ..... );
+
+1-1-3.
+
+@Param은 jpql 에서 바인딩할 부분을 ? 가 아닌 이름을 사용할 수 있도록 한다.
+
+
+package examples.boot.simpleboard.repository;
+
+import examples.boot.simpleboard.base.JpaQueryDslPredicateRepository;
+import examples.boot.simpleboard.domain.Board;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+public interface BoardRepository
+        extends JpaQueryDslPredicateRepository<Board, Long> {
+    @Query("SELECT COUNT(b) FROM Board b")
+    public Long countAll();
+
+    @Query("SELECT COUNT(b) FROM Board b WHERE b.user.name = :name")
+    public Long countAllByUserName(@Param("name") String name);
+
+    public Long countByTitleContains(String title);
+
+    @Query("SELECT COUNT(b) FROM Board b WHERE b.content like concat('%',:keyword,'%')")
+    public Long countByContentContains(@Param("keyword") String keyword);
+
+    public Page<Board> findAllBy(Pageable pageable);
+
+    @Query("SELECT b FROM Board b WHERE b.user.name = :name")
+    public Page<Board> findAllByUserName(@Param("name") String name, Pageable pageable);
+
+    public Page<Board> findAllByTitleContains(String title, Pageable pageable);
+
+    public Page<Board> findAllByContentContains(String content, Pageable pageable);
+}
+
+2. BoardServiceImpl에는 다음의 메소드를 추가한다.
+
+파라미터로 page(보여주고자 하는 페이지. pageable은 0이 시작페이지)
+        searchType : name, title, content
+        searchStr : 검색어
+
+PageRequest pageRequest = PageRequest.of(page값, 1page에 보여줄 수,  정렬규칙(Sort객체))
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<Board> getBoardList(int page, String searchType, String searchStr) {
+        Page<Board> list = null;
+
+        if(searchType != null)
+            searchType = searchType.toUpperCase(); // 대문자로 변경
+
+        PageRequest pageRequest = PageRequest.of(page - 1, 10,new Sort(Sort.Direction.DESC, "regdate"));
+        if("TITLE".equals(searchType)){
+            list = boardRepository.findAllByTitleContains(searchStr, pageRequest);
+        }else if("NAME".equals(searchType)){
+            list = boardRepository.findAllByUserName(searchStr, pageRequest);
+        }else if("CONTENT".equals(searchType)){
+            list = boardRepository.findAllByContentContains(searchStr, pageRequest);
+        }else{
+            list = boardRepository.findAllBy(pageRequest);
+        }
+        return list;
+    }
+
+3. BoardController 에 다음의 메소드를 추가한다.
+
+/boards   1page를 보여준다.
+/boards?page=2    2page를 보여준다
+/boards?page=1&searchType=name&searchStr=kim    이름이 kim인 결과중에서 1page를 보여준다.
+
+
+PagerModel : 페이징 처리를 위한 정보를 가지고 있는 객체
+             startPage, endPage, prevPage, nextPage는 계산된 결과를 반환하는 프로퍼티
+
+    @GetMapping
+    public String boardList(@RequestParam(name = "page", defaultValue = "1") int page,
+                            @RequestParam(name = "searchType", required = false) String searchType,
+                            @RequestParam(name = "searchStr", required = false) String searchStr,
+                            ModelMap modelMap){
+        Page<Board> boardPage = boardService.getBoardList(page, searchType, searchStr);
+
+        int totalPage = boardPage.getTotalPages();
+        PagerModel pagerModel = new PagerModel();
+        pagerModel.setButtonCount(5); // page의 수
+        pagerModel.setSearchStr(searchStr);
+        pagerModel.setSearchType(searchType);
+        pagerModel.setThisPage(page);
+        pagerModel.setTotalPage(boardPage.getTotalPages());
+        pagerModel.setTotalCount(boardPage.getTotalElements());
+
+        System.out.println("start page : " + pagerModel.getStartPage());
+        System.out.println("end page : " + pagerModel.getEndPage());
+
+        modelMap.addAttribute("list", boardPage);
+        modelMap.addAttribute("pager", pagerModel);
+
+        return "boards/list";
+    }
+
+4. list, pager를 받아서 결과를 출력하는 타임리프 템플릿
+
+
+list의 내용을 반복하면서 결과를 출력
+
+th:if="${not #lists.isEmpty(list)}"
+타임리프가 제공하는 메소드를 이용해서 비어있지 않을 경우 tr태그를 사용
+
+th:each="board : ${list}"
+list에 있는 내용을 하나씩 꺼내서 board에 대입하여 반복한다.
+
+<td th:text="${board.id}"></td>
+board가 가지고 있는 id프로퍼티의 값을 td태그 안의 text값으로 출력한다. 만약 이름이 kim sungpark이라면
+<td>kim sungpark</td> 와 같은 결과가 출력된다.
+
+<td th:text="${#temporals.format(board.regdate, 'yyyy/mm/dd HH:mm')}"></td>
+regdate는 LocalDateTime이라는 타입이다. 타임리프가 제공하는 #temporals.foramt을 이용해서 적절한 포맷으로 변환할 수 있다.
+
+                <tr th:if="${not #lists.isEmpty(list)}" th:each="board : ${list}">
+                    <td th:text="${board.id}"></td>
+                    <td><a th:href="@{'/boards/' + ${board.id}}" th:text="${board.title}"></a> </td>
+                    <td th:text="${board.user.name}"></td>
+                    <td th:text="${board.readCount}"></td>
+                    <td th:text="${#temporals.format(board.regdate, 'yyyy/mm/dd HH:mm')}"></td>
+                </tr>
+
+
+
+다음은 페이징 처리이다.
+
+ class="paginate_button page-item" 와 같은 클래스 속성이 있다고 하자.
+ 조건에 따라서 클래스 명을 추가하고 싶다면? 어떻게 해야할까?
+
+ th:classappend="(${pager.thisPage == 1} ? ' disabled ' : '')"
+ pager의 thisPage속성이 1과 같을 경우 disabled라는 클래스이름을 추가한다.
+
+th:classappend="(${pager.thisPage == i} ? ' active ' : '') + (${i > pager.totalPage} ? ' disabled ' : '')"
+
+th:classappend="(조건) + (조건)"
+2개의 조건을 넣으려면 위와 같은 방식으로 설정한다.
+
+10부터 15까지 반복하려면?
+for(int i = 10; i <= 15; i++){
+
+}
+
+<li th:each="i : ${#numbers.sequence( {pager.startPage}, {pager.endPage})}"></li>
+#numbers.sequence(시작번호, 끝번호) 를 이용하면 위의 for문처럼 반복할 수 있다.
+
+URL주소에서 파라미터를 사용하는 방법
+<a th:href="@{/boards(page=${i}, searchStr=${pager.searchStr},searchType=${pager.searchType})}">
+
+@{/boards}   : 자동으로 context path가 붙는다. 예를 들어 context path가 app 이라면
+http://localhost:8080/app/boards 그런데 우리는 context path가 / 니깐
+http://localhost:8080/boards
+
+@{/boards(파리미터명=값, 파라미터명=값, 파라미터명=값)}
+
+
+
+                        <ul class="pagination">
+                            <li th:classappend="(${pager.thisPage == 1} ? ' disabled ' : '')" class="paginate_button page-item" id="data_table_previous">
+                                <a th:href="@{/boards(page=1, searchStr=${pager.searchStr},searchType=${pager.searchType})}"  aria-controls="data_table" data-dt-idx="0" tabindex="0" class="page-link">&lt;&lt;</a>
+                            </li>
+                            <li th:classappend="(${pager.prevPage != 0} ? ' ' : ' disabled ')" class="paginate_button page-item previous" id="data_table_previous">
+                                <a th:href="@{/boards(page=${pager.prevPage}, searchStr=${pager.searchStr},searchType=${pager.searchType})}" aria-controls="data_table" data-dt-idx="0" tabindex="0" class="page-link">이전</a>
+                            </li>
+                            <li th:each="i : ${#numbers.sequence( {pager.startPage}, {pager.endPage})}" th:classappend="(${pager.thisPage == i} ? ' active ' : '') + (${i > pager.totalPage} ? ' disabled ' : '')" class="paginate_button page-item ">
+                                <a th:href="@{/boards(page=${i}, searchStr=${pager.searchStr},searchType=${pager.searchType})}" aria-controls="data_table" data-dt-idx="2" tabindex="0" class="page-link" th:text="${i}"></a>
+                            </li>
+                            <li th:classappend="(${pager.nextPage == 0} ? ' disabled ' : '')" class="paginate_button page-item next" id="data_table_next">
+                                <a th:href="@{/boards(page=${pager.nextPage}, searchStr=${pager.searchStr},searchType=${pager.searchType})}" aria-controls="data_table" data-dt-idx="7" tabindex="0" class="page-link">이후</a>
+                            </li>
+                            <li th:classappend="(${pager.nextPage == 0} ? ' disabled ' : '')" class="paginate_button page-item" id="data_table_next">
+                                <a th:href="@{/boards(page=${pager.totalPage}, searchStr=${pager.searchStr},searchType=${pager.searchType})}"  aria-controls="data_table" data-dt-idx="0" tabindex="0" class="page-link">&gt;&gt;</a>
+                            </li>
+                        </ul>

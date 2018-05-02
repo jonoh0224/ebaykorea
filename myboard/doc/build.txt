@@ -1,0 +1,7 @@
+mvn package  -Dmaven.test.skip=true
+
+
+gradle build -x test
+
+gradle jar
+

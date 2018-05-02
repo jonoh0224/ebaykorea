@@ -1,0 +1,35 @@
+터미널 환경에서 실행
+
+master브랜치에 최신코드가 있어야 한다.
+
+1. heroku cli 설치
+
+2. 터미널 환경에서 실행
+
+heroku login
+
+heroku create
+
+git push heroku master
+
+-- 헤로쿠에 소스를 push하면 빌드, 실행
+-- 프로젝트 루트 폴더에 Procfile이란 파일을 생성한다. 이 파일의 내용을 보고 실행을한다.
+
+
+헤로쿠 로그 확인
+
+heroku logs --tail
+
+------------------------
+
+heroku 용 spring boot profile을 설정하여 실행하기
+
+ heroku config:set SPRING_PROFILES_ACTIVE=heroku
+
+ 확인
+
+ heroku config
+
+설정 삭제
+
+eroku config:unset SPRING_PROFILES_ACTIVE

@@ -1,0 +1,35 @@
+정적 리소스 중 인증없이 보도록 하려면?
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+                .logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/boards").and()
+            .authorizeRequests()
+                .antMatchers("/boards/writeform").hasRole("USER")
+                .antMatchers("/boards/**").permitAll()
+                .antMatchers(HttpMethod.GET,"/api/users").permitAll()
+                .antMatchers("/api/boards").hasRole("USER")
+                .antMatchers("/api/boards/**").permitAll()
+
+
+/api/boards 에 대한요청은 "USER"권한이 있어야 한다.
+
+.antMatchers(HttpMethod.GET,"/api/users").permitAll()
+
+GET방식으로 /api/users를 요청하는 것은 로그인을 하지 않아도 된다.
+그럼에도 불구하고 select 문은 실행된다.
+
+
+--------------------------
+
+
+WebSecurityConfigurerAdapter 를 상속받는 java config설정중에서 다음과 같이 메소드를 오버라이딩한다.
+
+web.ignoring() 로 설정하면 아예 인증과는 무관하다.
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring()
+                .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
+                .requestMatchers(new AntPathRequestMatcher("/**.html"))
+                .requestMatchers(new AntPathRequestMatcher("/static/**"));
+    }
