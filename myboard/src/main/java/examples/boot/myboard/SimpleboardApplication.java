@@ -20,6 +20,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import java.util.ArrayList;
 import java.util.List;
 
+
+// http://localhost:8080/boards
 @SpringBootApplication
 public class SimpleboardApplication  implements WebMvcConfigurer {
 
