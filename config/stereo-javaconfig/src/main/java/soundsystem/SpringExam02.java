@@ -8,6 +8,7 @@ public class SpringExam02 {
         ApplicationContext context =
                 new AnnotationConfigApplicationContext(CDPlayerConfig2.class);
 
+//        CompactDisc compactDisc = (CompactDisc)context.getBean("myDisc");
         CompactDisc myDisc = context.getBean("myDisc", CompactDisc.class);
         CDPlayer cdPlayer = context.getBean(CDPlayer.class);
         CompactDisc disc = cdPlayer.getCompactDisc();
