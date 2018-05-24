@@ -1,6 +1,6 @@
 package examples.boot.myboard;
 
-public class Test {
+public class Test2 {
     /*public static void main(String[] args){
         String str = "";
         for(int i = 0; i < 100; i++){
@@ -13,7 +13,7 @@ public class Test {
     }
 }
 
-class MyBean01{
+class MyBean02{
     static{
         System.out.println("hello!");
     }

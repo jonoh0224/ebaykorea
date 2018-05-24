@@ -11,6 +11,11 @@ public class CDPlayerConfig2 {
     System.out.println("cdPlayer() 호출");
     return new CDPlayer(myDisc());
   }
+  @Bean
+  public CDPlayer cdPlayer2() {
+    System.out.println("cdPlayer() 호출");
+    return new CDPlayer(myDisc());
+  }
 
   @Bean
   public CompactDisc compactDisc() {

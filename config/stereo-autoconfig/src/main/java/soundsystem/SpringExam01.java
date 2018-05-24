@@ -8,10 +8,10 @@ public class SpringExam01 {
         ApplicationContext context =
                 new AnnotationConfigApplicationContext(CDPlayerConfig.class);
 
-        CDPlayer player1 = context.getBean(CDPlayer.class);
-        player1.play();
-        CDPlayer2 player2 = context.getBean(CDPlayer2.class);
-        player2.play();
+//        CDPlayer player1 = context.getBean(CDPlayer.class);
+//        player1.play();
+//        CDPlayer2 player2 = context.getBean(CDPlayer2.class);
+//        player2.play();
 //        if(player1 == player2){
 //            System.out.println("player1 == player2");
 //        }
