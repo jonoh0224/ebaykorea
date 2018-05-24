@@ -33,7 +33,10 @@ public class WebMvcContextConfiguration extends WebMvcConfigurerAdapter {
     		System.out.println("addViewControllers가 호출됩니다. ");
         registry.addViewController("/").setViewName("main");
     }
-    
+
+    // 컨트롤러가 "name"값을 리턴하면
+    // "/WEB-INF/views/" + "name" + ".jsp"
+    // 위의 파일이름을 결정해서 view로 사용하도록 한다.
     @Bean
     public InternalResourceViewResolver getInternalResourceViewResolver() {
         InternalResourceViewResolver resolver = new InternalResourceViewResolver();
