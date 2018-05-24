@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Board List</title>
+    <link rel="stylesheet"
+          th:href="@{/webjars/bootstrap/4.1.0/css/bootstrap.min.css}"/>
+    <script th:src="@{/webjars/jquery/3.3.1-1/jquery.min.js}"></script>
+    <script th:src="@{/webjars/bootstrap/4.1.0/js/bootstrap.min.js}"></script>
+</head>
+
+<body>
+<h1 th:text="${name}"></h1>
+
+<div>리스트가 보여질꺼야.</div>
+<a th:href="@{/boards/1}">1번글</a><br>
+<a th:href="@{/boards/2}">2번글</a><br>
+<a th:href="@{/boards/3}">3번글</a><br>
+
+
+<a th:href="@{/boards/write}">글쓰기</a>
+</body>
+
+</html>

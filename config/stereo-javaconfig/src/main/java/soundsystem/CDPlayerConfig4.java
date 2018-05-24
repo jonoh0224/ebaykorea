@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Scope;
 public class CDPlayerConfig4 {
 
   @Bean
-  @Scope("prototype")
+//  @Scope("prototype")
   public CompactDisc compactDisc() {
     System.out.println("compactDisc() 호출");
     return new SgtPeppers();
