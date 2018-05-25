@@ -14,7 +14,7 @@ public class Examples01 {
         System.out.println(mockedList.getClass().getName());
 
         // mock 사용하기
-        mockedList.add("one");
+        mockedList.add("two");
         mockedList.clear();
 
         // verification

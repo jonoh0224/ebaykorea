@@ -23,6 +23,16 @@ public class Examples10 {
 
     @Test
     public void test() {
+        when(mockedList.get(anyInt())).thenAnswer((invocationOnMock)->{
+                Integer intObj = invocationOnMock.getArgumentAt(0, Integer.class);
+                return intObj.intValue() + 5;
+            });
+
+        Object obj = mockedList.get(10);
+        System.out.println(obj);
+        System.out.println("-------------------------------");
+
+
         // int get(int)
         when(mockedList.get(anyInt())).thenAnswer(new Answer<Integer>() {
             public Integer answer(InvocationOnMock invocation) {
