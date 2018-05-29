@@ -37,7 +37,8 @@ public class Examples11 {
         verify(spy).add("two");
 
 // Wrong use case
-//        when(spy.get(10)).thenReturn("foo"); // IndexOutOfBoundsException
+        when(spy.get(10)).thenReturn("foo"); // IndexOutOfBoundsException
+        System.out.println(spy.get(10));
 
 // use doReturn() instead
         doReturn("foo").when(spy).get(0);

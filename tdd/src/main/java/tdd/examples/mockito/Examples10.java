@@ -1,5 +1,6 @@
 package tdd.examples.mockito;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -21,16 +22,28 @@ public class Examples10 {
     @Mock
     private List mockedList;
 
+    @Before
+    public void init(){
+
+        when(mockedList.get(anyInt())).thenAnswer((invocationOnMock) -> {
+                Object[] arguments = invocationOnMock.getArguments();
+                Integer intObj = invocationOnMock.getArgumentAt(0, Integer.class);
+                return intObj.intValue() + 100;
+            }
+        );
+    }
+
     @Test
     public void test() {
+        Object obj = mockedList.get(1000);
+        System.out.println(obj);
+        System.out.println("------------------------");
         // int get(int)
-        when(mockedList.get(anyInt())).thenAnswer(new Answer<Integer>() {
-            public Integer answer(InvocationOnMock invocation) {
-                Object[] args = invocation.getArguments(); // arguments
-                List mock = (List)invocation.getMock(); // mock itself
-                int result = (Integer)args[0] + 1;
-                return result;
-            }
+        when(mockedList.get(anyInt())).thenAnswer((Answer<Integer>) invocation -> {
+            Object[] args = invocation.getArguments(); // arguments
+            List mock = (List)invocation.getMock(); // mock itself
+            int result = (Integer)args[0] + 1;
+            return result;
         });
         // int size();    0<=x<=10
 
