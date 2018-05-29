@@ -37,7 +37,9 @@ public class Examples10 {
     public void test() {
         Object obj = mockedList.get(1000);
         System.out.println(obj);
-        System.out.println("------------------------");
+        System.out.println("-------------------------------");
+
+
         // int get(int)
         when(mockedList.get(anyInt())).thenAnswer((Answer<Integer>) invocation -> {
             Object[] args = invocation.getArguments(); // arguments

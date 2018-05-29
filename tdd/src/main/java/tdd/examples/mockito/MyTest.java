@@ -23,7 +23,7 @@ public class MyTest {
     }
 
     @Test
-    public void test2() throws Exception {
+    public void test2() throws Exception{
         System.out.println("test2");
     }
 }

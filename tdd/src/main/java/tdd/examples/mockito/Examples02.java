@@ -13,7 +13,7 @@ public class Examples02 {
 //        LinkedList<String> list = new LinkedList<>();
 //        System.out.println(list.get(10));
 
-        // 클래스 뿐만이 아니라 인터페이스도 mock 할 수 있다.
+        // 인터페이스뿐만이 아니라 클래스도 mock 할 수 있다.
         LinkedList mockedList = mock(LinkedList.class);
 
         // stubbing
@@ -21,7 +21,7 @@ public class Examples02 {
         when(mockedList.get(1)).thenThrow(new RuntimeException());
 
         System.out.println(mockedList.get(0)); // first
-//        System.out.println(mockedList.get(1)); // Runtime exception 발생
+        System.out.println(mockedList.get(1)); // Runtime exception 발생
         System.out.println(mockedList.get(10)); // null
 
         verify(mockedList).get(0);
