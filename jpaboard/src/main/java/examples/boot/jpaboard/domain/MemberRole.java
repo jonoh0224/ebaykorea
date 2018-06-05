@@ -1,0 +1,30 @@
+package examples.boot.jpaboard.domain;
+
+import lombok.Getter;
+import lombok.Setter;
+
+import javax.persistence.*;
+
+@Entity
+@Table(name = "member_role")
+@Getter
+@Setter
+public class MemberRole {
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    private Long id;
+    private String name;
+
+    // MemberRole이 영속화될 때, Member도 영속화 시킨다. cascade = CascadeType.ALL
+    @ManyToOne(targetEntity = Member.class, cascade = CascadeType.ALL)
+    @JoinColumn(name="member_id")
+    private Member member;
+
+    // helper
+    public void setMember(Member member){
+        this.member = member;
+        if(!member.getMemberRoles().contains(member)){
+            member.getMemberRoles().add(this);
+        }
+    }
+}

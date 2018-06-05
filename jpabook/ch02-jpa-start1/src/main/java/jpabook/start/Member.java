@@ -8,7 +8,7 @@ public class Member {
 
     @Id // 엔티티 클래스의 필드를 테이블의 기본키에 매핑
     @Column(name = "ID") // 필드를 칼럼에 매핑
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+//    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private String id;
 
     @Column(name = "NAME")

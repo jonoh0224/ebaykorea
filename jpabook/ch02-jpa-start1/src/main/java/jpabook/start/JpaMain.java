@@ -8,6 +8,7 @@ import java.util.List;
  */
 public class JpaMain {
 
+    // Spring DATA Jpa --> JPA --> EntityManger
     public static void main(String[] args) {
 
         //엔티티 매니저 팩토리 생성
@@ -40,30 +41,35 @@ public class JpaMain {
 
         String id = "id1";
         Member member = new Member();
-//        member.setId(id);
+        member.setId(id);
         member.setUsername("지한");
         member.setAge(2);
 
         //등록
+        System.out.println("11111");
         em.persist(member);
-        System.out.println("---------------------------");
-
-        em.detach(member);
+////        System.out.println("---------------------------");
+////
+//        em.detach(member);
+        System.out.println("222222");
         member.setAge(50);
-        em.merge(member); // em.persist(member)는 오류가 발생한다.
+        System.out.println("333333");
+//        member.setAge(2);
+        System.out.println("4444444");
+//        em.merge(member); // em.persist(member)는 오류가 발생한다.
         //수정
 //        member.setAge(20);
-//
+////
 //        //한 건 조회
-//        Member findMember = em.find(Member.class, id);
+//        Member findMember = em.find(Member.class, member.getId());
 //        System.out.println("findMember=" + findMember.getUsername() + ", age=" + findMember.getAge());
-//
-//        //목록 조회
-//        List<Member> members = em.createQuery("select m from Member m", Member.class).getResultList();
-//        System.out.println("members.size=" + members.size());
-//
-//        //삭제
-//        em.remove(member);
+////
+////        //목록 조회
+////        List<Member> members = em.createQuery("select m from Member m", Member.class).getResultList();
+////        System.out.println("members.size=" + members.size());
+////
+////        //삭제
+        em.remove(member);
 
     }
 }
