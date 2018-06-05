@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 public class MemberServiceImpl implements MemberService {
     @Autowired
@@ -17,7 +19,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional(readOnly = true)
     public Member getMember(Long id) {
-        return memberRepository.getOne(id);
+        return memberRepository.getMember(id);
     }
 
     @Override
@@ -29,5 +31,11 @@ public class MemberServiceImpl implements MemberService {
         member =
                 memberRepository.save(member);
         return member;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Member> getMembers() {
+        return memberRepository.getMembers();
     }
 }

@@ -1,6 +1,7 @@
 package examples.boot.jpaboard.domain;
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,6 +26,7 @@ public class Member implements Serializable {
     private LocalDateTime regdate;
 
     // Member가 영속성을 가질때 memberRoles도 영속성을 가지도록 한다.
+    @JsonManagedReference
     @OneToMany(mappedBy="member", cascade = CascadeType.ALL)
     private List<MemberRole> memberRoles = new ArrayList<>();
 
